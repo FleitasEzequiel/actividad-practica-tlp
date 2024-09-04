@@ -1,25 +1,17 @@
-export const database = 
-    {
-        user: [
-            {
-                id: 1,
-                username: 'admin',
-                password: 'admin'
-            },
-            {
-                id: 2,
-                username: 'user',
-                password: 'user'
-            },
-            {
-                id: 3,
-                username: 'guest',
-                password: 'guest'
-            },
-            {
-                id: 4,
-                username: 'guest2',
-                password: 'guest2'
-            }
-        ]
+import { createPool} from "mysql2/promise"
+import { DB_HOST,DB_NAME,DB_PASSWORD,DB_USER} from "./config.js"
+export const createMyPool =()=>{
+    try {
+        const newPool = createPool({
+            host: DB_HOST,
+            user: DB_USER,
+            password: DB_PASSWORD,
+            database: DB_NAME,
+        })
+        return newPool;
+    } catch (error) {
+        console.log(error)
     }
+} 
+
+export const pool = createMyPool();

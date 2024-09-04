@@ -5,8 +5,6 @@ import morgan from "morgan";
 import path from "path";
 import { router } from "./routes/auth.routes.js";
 
-import { database } from "./db/database.js";
-
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -36,7 +34,7 @@ app.use(
     },
   })
 );
-// app.use(Router);
+
 app.use(router);
 
 app.listen(PORT, () =>

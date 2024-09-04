@@ -1,15 +1,14 @@
-import { database } from "../db/database.js";
+import { pool } from "../db/database.js"
+
 export const login = async (req, res) => {
   const { username, password } = req.body;
-  // Buscar usuario
-  const user = database.user.find(
-    (u) => u.username === username && u.password === password
-  );
-
-  if (user) {
+  const user = await pool.query("SELECT * FROM users WHERE username= ? AND password = ?",[username,password])
+  
+  if (user[0].length != 0) {
+    console.log(user[0])
     // Guardar información del usuario en la sesión
-    req.session.userId = user.id;
-    req.session.username = user.username;
+    req.session.userId = user[0].id;
+    req.session.username = user[0].username;
 
     return res.json({
       message: "Inicio de sesión exitoso",
