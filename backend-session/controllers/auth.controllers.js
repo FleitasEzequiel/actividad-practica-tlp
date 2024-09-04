@@ -1,14 +1,26 @@
 import { pool } from "../db/database.js"
-
+import generarJwt from "../helpers/generar-jwt.js"
 export const login = async (req, res) => {
   const { username, password } = req.body;
-  const user = await pool.query("SELECT * FROM users WHERE username= ? AND password = ?",[username,password])
-  
+  const [user] = await pool.query("SELECT * FROM users WHERE username = ?",[username,password])
   if (user[0].length != 0) {
-    console.log(user[0])
     // Guardar información del usuario en la sesión
     req.session.userId = user[0].id;
     req.session.username = user[0].username;
+
+    // Generar token JWT
+    const token = await generarJwt(user.id);
+
+    // Almacenar el token en la sesión del servidor
+    req.session.token = token;
+
+    // Almacenar el token en una cookie segura
+    res.cookie('authToken', token, {
+          httpOnly: true, // La cookie no es accesible desde JavaScript
+          secure: false, // Cambiar a true en producción con HTTPS
+          maxAge: 3600000 // Expiración en milisegundos (1 hora)
+      });
+
 
     return res.json({
       message: "Inicio de sesión exitoso",
