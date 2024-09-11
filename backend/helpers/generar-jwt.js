@@ -3,7 +3,6 @@ import { SECRET_KEY } from "../config/config.js";
 
 export default (userId) => {
   return new Promise((resolve, reject) => {
-    console.log(userId);
     const payload = { userId };
     jwt.sign(
       payload,

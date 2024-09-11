@@ -2,17 +2,14 @@ import { pool } from "../db/database.js";
 import generarJwt from "../helpers/generar-jwt.js";
 export const login = async (req, res) => {
   const { username, password } = req.body;
-  const [user] = await pool.query(
+  const [[user]] = await pool.query(
     "SELECT * FROM users WHERE username = ? and password = ?",
     [username, password]
   );
-  if (user[0] != undefined) {
-    // Guardar información del usuario en la sesión
-    req.session.userId = user[0].id;
-    req.session.username = user[0].username;
-
+  console.log(user);
+  if (user) {
     // Generar token JWT
-    const token = await generarJwt(user[0].id);
+    const token = await generarJwt(user.id);
 
     // Almacenar el token en la sesión del servidor
     req.session.token = token;
@@ -50,16 +47,11 @@ export const register = async (req, res) => {
   }
 };
 export const session = async (req, res) => {
-  if (req.session.userId) {
-    return res.json({
-      loggedIn: true,
-      user: { id: req.session.userId, username: req.session.username },
-    });
-  } else {
-    return res
-      .status(401)
-      .json({ loggedIn: false, message: "No hay sesión activa" });
-  }
+  console.log(req.user);
+  return res.json({
+    message: "Acceso permitido a área protegida",
+    user: req.user,
+  });
 };
 export const logOut = async (req, res) => {
   console.log(req.session);
